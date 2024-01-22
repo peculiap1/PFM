@@ -71,16 +71,19 @@ public class ExpenseEntryScreen {
 
                 if (success) {
                     clearForm();
-                    showAlert(Alert.AlertType.INFORMATION, "Expense Added", "Expense has been successfully added.");
+                    showAlert(Alert.AlertType.INFORMATION, "Expense Added", "Expense has been successfully added.", true);
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Save Failed", "Failed to add expense. Please try again.");
+                    showAlert(Alert.AlertType.ERROR, "Save Failed", "Failed to add expense. Please try again.", false);
                 }
             } else {
-                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please check your input and try again.");
+                showAlert(Alert.AlertType.ERROR, "Invalid Input", "Please check your input and try again.", false);
             }
         });
+        Button backButton = new Button("Back");
+        backButton.setOnAction(e -> app.showDashboard());
+        GridPane.setConstraints(backButton, 1,4);
 
-        view.getChildren().addAll(amountLabel, amountField, categoryLabel, categoryDropdown, datePicker, saveButton);
+        view.getChildren().addAll(amountLabel, amountField, categoryLabel, categoryDropdown, datePicker, saveButton, backButton);
     }
 
     private void clearForm() {
@@ -89,12 +92,17 @@ public class ExpenseEntryScreen {
         datePicker.setValue(null);
     }
 
-    private void showAlert(Alert.AlertType alertType, String title, String message) {
+    private void showAlert(Alert.AlertType alertType, String title, String message, boolean navigateBack) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
-        alert.showAndWait();
+
+        if (navigateBack) {
+            alert.setOnHidden(evt -> app.showDashboard());
+        }
+
+        alert.show();
     }
 
     private boolean validateExpenseData(String amountText, String category, LocalDate date) {

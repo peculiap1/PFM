@@ -53,7 +53,7 @@ public class LoginScreen {
     private void handleLogin(String username, String password) {
         String result = userService.authenticateUser(username, password);
         if (result == null) {
-           app.showIncomeEntryScreen();
+           app.showincomeScreen();
         } else {
             showErrorDialog(result);
         }

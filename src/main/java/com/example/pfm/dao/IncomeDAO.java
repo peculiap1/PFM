@@ -5,6 +5,7 @@ import com.example.pfm.util.MySQLConnection;
 
 import javax.xml.transform.Result;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,7 +79,7 @@ public class IncomeDAO {
     }
 
     public boolean updateIncome(Income income) {
-        String sql = "UPDATE income SET amount = ?, source = ?, date = ?, WHERE id = ? AND user_id = ?";
+        String sql = "UPDATE income SET amount = ?, source = ?, date = ? WHERE id = ? AND user_id = ?";
         try (Connection conn = MySQLConnection.getConnection();
             PreparedStatement stmt = conn.prepareStatement(sql)) {
 
@@ -110,5 +111,44 @@ public class IncomeDAO {
             e.printStackTrace();
         }
         return false;
+    }
+    //method to get the total income for the current month
+    public double getTotalIncomeForCurrentMonth(int userId) {
+        String sql = "SELECT SUM(amount) AS total FROM income WHERE user_id = ? AND MONTH(date) = ? AND YEAR(date) = ?";
+        try (Connection conn = MySQLConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            LocalDate now = LocalDate.now();
+            stmt.setInt(1, userId);
+            stmt.setInt(2, now.getMonthValue()); // Current month
+            stmt.setInt(3, now.getYear()); // Current year
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0; //if error or no incomes found
+    }
+    //method to get the total income for a month
+    public double getTotalIncomeForMonth(int userId, int month, int year) {
+        String sql = "SELECT SUM(amount) AS total FROM income WHERE user_id = ? AND MONTH(date) = ? AND YEAR(date) = ?";
+        try(Connection conn = MySQLConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, month);
+            stmt.setInt(3, year);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
     }
 }

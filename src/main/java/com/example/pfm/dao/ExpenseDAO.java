@@ -3,7 +3,9 @@ package com.example.pfm.dao;
 import com.example.pfm.model.Expense;
 import com.example.pfm.util.MySQLConnection;
 
+import javax.xml.transform.Result;
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -109,6 +111,26 @@ public class ExpenseDAO {
             e.printStackTrace();
         }
         return false;
+    }
+
+    public double getTotalExpenseForCurrentMonth(int userId) {
+        String sql = "SELECT SUM(amount) AS total FROM expense WHERE user_id = ? AND MONTH(date) = ? AND YEAR(date) = ?";
+        try (Connection conn = MySQLConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            LocalDate now = LocalDate.now();
+            stmt.setInt(1, userId);
+            stmt.setInt(2, now.getMonthValue());
+            stmt.setInt(3, now.getYear());
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
     }
 
 }
