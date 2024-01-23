@@ -1,0 +1,19 @@
+.chart-bar {
+    -fx-bar-fill: #5D3587;
+}
+
+.chart-horizontal-grid-lines, .chart-vertical-grid-lines {
+    -fx-opacity: 0;
+}
+
+.chart-axis-tick-mark {
+    -fx-opacity: 1;
+}
+
+.axis-label {
+    -fx-text-fill: black;
+}
+
+.chart-axis {
+    -fx-tick-label-fill: black;
+}

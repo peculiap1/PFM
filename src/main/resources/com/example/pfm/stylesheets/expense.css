@@ -1,3 +1,6 @@
+.chart-bar {
+    -fx-bar-fill: #B09CD9;
+}
 
 .chart-horizontal-grid-lines, .chart-vertical-grid-lines {
     -fx-opacity: 0;

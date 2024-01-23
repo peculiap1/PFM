@@ -70,12 +70,27 @@ public class PFMApp extends Application {
         primaryStage.setTitle("PFM - Dashboard");
     }
 
-    public void showincomeScreen() {
+    public void showIncomeScreen() {
         int currentUserId = userService.getCurrentUserId();
         IncomeScreen incomeScreen = new IncomeScreen(this, incomeDAO, currentUserId);
         Scene scene = new Scene(incomeScreen.getView(), 1024, 768);
         primaryStage.setScene(scene);
         primaryStage.setTitle("PFM - Income");
+    }
+
+    public void showExpenseScreen() {
+        int currentUserId = userService.getCurrentUserId();
+        ExpenseScreen expenseScreen = new ExpenseScreen(this, expenseDAO, currentUserId);
+        Scene scene = new Scene(expenseScreen.getView(), 1204, 768);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("PFM - Expense");
+    }
+
+    public void showMainScreen() {
+        MainScreen mainScreen = new MainScreen(this, incomeDAO, expenseDAO);
+        Scene scene = new Scene(mainScreen.getView(), 1204, 768);
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("PFM");
     }
 
     public static void main(String[] args) {

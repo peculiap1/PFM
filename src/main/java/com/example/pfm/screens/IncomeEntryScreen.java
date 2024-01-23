@@ -101,7 +101,7 @@ public class IncomeEntryScreen {
         alert.setContentText(message);
 
         if (navigateBack) {
-            alert.setOnHidden(evt -> app.showDashboard());
+            alert.setOnHidden(evt -> app.showMainScreen());
         }
 
         alert.show();

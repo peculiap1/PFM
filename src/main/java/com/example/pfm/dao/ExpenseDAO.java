@@ -133,4 +133,23 @@ public class ExpenseDAO {
         return 0.0;
     }
 
+    public double getTotalExpenseForMonth(int userId, int month, int year) {
+        String sql = "SELECT SUM(amount) AS total FROM expense WHERE user_id = ? AND MONTH(date) = ? AND YEAR(date) = ?";
+        try(Connection conn = MySQLConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setInt(2, month);
+            stmt.setInt(3, year);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                return rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return 0.0;
+    }
+
 }

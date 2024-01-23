@@ -80,7 +80,7 @@ public class ExpenseEntryScreen {
             }
         });
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> app.showDashboard());
+        backButton.setOnAction(e -> app.showMainScreen());
         GridPane.setConstraints(backButton, 1,4);
 
         view.getChildren().addAll(amountLabel, amountField, categoryLabel, categoryDropdown, datePicker, saveButton, backButton);
