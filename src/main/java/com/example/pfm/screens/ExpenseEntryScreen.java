@@ -1,6 +1,7 @@
 package com.example.pfm.screens;
 
 import com.example.pfm.PFMApp;
+import com.example.pfm.config.CategoryConfig;
 import com.example.pfm.model.Expense;
 import javafx.geometry.Insets;
 import javafx.scene.control.*;
@@ -44,7 +45,7 @@ public class ExpenseEntryScreen {
 
         // Category Select
         categoryDropdown = new ComboBox<>();
-        categoryDropdown.getItems().addAll("Groceries", "Shopping", "Utilities", "Entertainment", "Insurance", "Hobbies", "Travel", "Other");
+        categoryDropdown.getItems().addAll(CategoryConfig.CATEGORIES);
         categoryDropdown.setPromptText("Select Category");
         GridPane.setConstraints(categoryDropdown, 1,1);
 
@@ -99,7 +100,7 @@ public class ExpenseEntryScreen {
         alert.setContentText(message);
 
         if (navigateBack) {
-            alert.setOnHidden(evt -> app.showDashboard());
+            alert.setOnHidden(evt -> app.showMainScreen());
         }
 
         alert.show();

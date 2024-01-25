@@ -1,8 +1,10 @@
 package com.example.pfm.screens;
 
 import com.example.pfm.PFMApp;
+import com.example.pfm.dao.BudgetDAO;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.dao.IncomeDAO;
+import com.example.pfm.model.Budget;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.scene.Node;
@@ -11,7 +13,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
-public class DashboardScreen {
+public class DashboardScreen implements DataRefresh{
     private VBox view;
     private PFMApp app;
 
@@ -21,18 +23,31 @@ public class DashboardScreen {
     private StackedBarChart<Number, String> financeChart;
     private IncomeDAO incomeDAO;
     private ExpenseDAO expenseDAO;
+    private BudgetDAO budgetDAO;
+    private int userId;
 
-    public DashboardScreen(PFMApp app, IncomeDAO incomeDAO, ExpenseDAO expenseDAO) {
+    public DashboardScreen(PFMApp app, IncomeDAO incomeDAO, ExpenseDAO expenseDAO, BudgetDAO budgetDAO, int userId) {
         this.app = app;
+        app.registerListener(this);
         this.incomeDAO = incomeDAO;
         this.expenseDAO = expenseDAO;
+        this.budgetDAO = budgetDAO;
+        this.userId = userId;
         createView();
         createFinanceChart();
+        addBudgetPieChartToDashBoard();
         updateTotals();
 
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/dashboard.css").toExternalForm());
 
     }
+
+    @Override
+    public void refreshData() {
+        updateTotals();
+        updatePieChart();
+    }
+
 
     private void createView() {
         view = new VBox(10);
@@ -74,9 +89,74 @@ public class DashboardScreen {
         financeChart.setHorizontalGridLinesVisible(false);
         financeChart.setVerticalGridLinesVisible(false);
 
-
-
         view.getChildren().add(financeChart);
+    }
+
+    // Pie chart (budgets)
+    private PieChart createBudgetPieChart() {
+       PieChart pieChart = new PieChart();
+
+        budgetDAO.getAllBudgetsByUserId(userId).forEach(budget -> {
+            PieChart.Data slice = new PieChart.Data(
+                    budget.getCategory() + ": €" + budget.getSpentAmount(),
+                    budget.getSpentAmount()
+            );
+            pieChart.getData().add(slice);
+        });
+
+        Platform.runLater(() -> {
+            for (PieChart.Data data : pieChart.getData()) {
+                Node sliceNode = data.getNode();
+                String category = data.getName().split(":")[0];
+                String styleClass = getCategoryStyleClass(category);
+                if (sliceNode != null && styleClass != null) {
+                    sliceNode.getStyleClass().add(styleClass);
+                }
+            }
+        });
+
+        pieChart.setLegendVisible(false);
+
+        return pieChart;
+    }
+
+    private String getCategoryStyleClass(String category) {
+        switch (category) {
+            case "Shopping":
+                return "shopping-slice";
+            case "Travel":
+                return "travel-slice";
+            case "Groceries":
+                return "groceries-slice";
+            case "Insurance":
+                return "insurance-slice";
+            case "Utilities":
+                return "utilities-slice";
+            case "Entertainment":
+                return "entertainment-slice";
+            case "Hobbies":
+                return "hobbies-slice";
+            case "Other":
+                return "other-slice";
+            default:
+                return null;
+        }
+    }
+
+    private void addBudgetPieChartToDashBoard() {
+        PieChart budgetPieChart = createBudgetPieChart();
+        view.getChildren().add(budgetPieChart);
+    }
+
+    private void updatePieChart() {
+        PieChart pieChart = createBudgetPieChart();
+        for (Node node : view.getChildren()) {
+            if (node instanceof PieChart) {
+                view.getChildren().remove(node);
+                break;
+            }
+        }
+        view.getChildren().add(pieChart);
     }
 
     private void updateTotals() {
@@ -142,6 +222,7 @@ public class DashboardScreen {
                 return "gray";
         }
     }
+
 
     public VBox getView() {
         return view;

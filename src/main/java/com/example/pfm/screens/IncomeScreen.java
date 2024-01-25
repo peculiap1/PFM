@@ -22,7 +22,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public class IncomeScreen {
+public class IncomeScreen implements DataRefresh{
     private VBox view;
     private PFMApp app;
     private IncomeDAO incomeDAO;
@@ -32,6 +32,7 @@ public class IncomeScreen {
 
     public IncomeScreen(PFMApp app, IncomeDAO incomeDAO, int userId) {
         this.app = app;
+        app.registerListener(this);
         this.incomeDAO = incomeDAO;
         this.userId = userId;
         createView();
@@ -119,6 +120,7 @@ public class IncomeScreen {
                     boolean updateSuccess = incomeDAO.updateIncome(newIncome);
                     if (updateSuccess) {
                         refreshIncomeTable();
+                        app.onDataChanged();
                     } else {
                         showAlert("Update Error", "Could not update the income information.");
                     }
@@ -128,6 +130,7 @@ public class IncomeScreen {
             private void refreshIncomeTable() {
                 incomeTableView.setItems(FXCollections.observableArrayList(incomeDAO.getAllIncomesByUserId(userId)));
                 updateIncomeChart();
+                app.onDataChanged();
             }
 
             private void showAlert(String title, String message) {
@@ -151,6 +154,7 @@ public class IncomeScreen {
                     if (deleteSuccess) {
                         // When the deletion was successful, the table updates
                         refreshIncomeTable();
+                        app.onDataChanged();
                     } else {
                         // When the deletion fails, it shows an error message
                         showAlert("Deletion Error", "Could not delete the income record.");
@@ -208,6 +212,12 @@ public class IncomeScreen {
         incomeChart.getData().clear();
         incomeChart.getData().add(series);
     }
+
+    @Override
+    public void refreshData() {
+        updateIncomeChart();
+    }
+
 
     public VBox getView() {
         return view;

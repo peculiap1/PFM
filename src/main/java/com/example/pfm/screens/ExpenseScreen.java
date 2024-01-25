@@ -1,6 +1,7 @@
 package com.example.pfm.screens;
 
 import com.example.pfm.PFMApp;
+import com.example.pfm.config.CategoryConfig;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.model.Expense;
 import javafx.collections.FXCollections;
@@ -22,7 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 
-public class ExpenseScreen {
+public class ExpenseScreen implements DataRefresh {
     private VBox view;
     private PFMApp app;
     private ExpenseDAO expenseDAO;
@@ -32,6 +33,7 @@ public class ExpenseScreen {
 
     public ExpenseScreen(PFMApp app, ExpenseDAO expenseDAO, int userId) {
         this.app = app;
+        app.registerListener(this);
         this.expenseDAO = expenseDAO;
         this.userId = userId;
         createView();
@@ -85,7 +87,7 @@ public class ExpenseScreen {
 
                 TextField amountField = new TextField(String.valueOf(selectedExpense.getAmount()));
                 ComboBox<String> categoryField = new ComboBox<>();
-                categoryField.getItems().addAll("Groceries", "Shopping", "Utilities", "Entertainment", "Insurance", "Hobbies", "Travel", "Other");
+                categoryField.getItems().addAll(CategoryConfig.CATEGORIES);
                 categoryField.setValue(selectedExpense.getCategory());
                 DatePicker datePicker = new DatePicker(selectedExpense.getDate());
 
@@ -119,6 +121,7 @@ public class ExpenseScreen {
                     boolean updateSuccess = expenseDAO.updateExpense(newExpense);
                     if (updateSuccess) {
                         refreshExpenseTable();
+                        app.onDataChanged();
                     } else {
                         showAlert("Update Error", "Could not update the Expense information.");
                     }
@@ -151,6 +154,7 @@ public class ExpenseScreen {
                     if (deleteSuccess) {
                         // When the deletion was successful, the table updates
                         refreshExpenseTable();
+                        app.onDataChanged();
                     } else {
                         // When the deletion fails, it shows an error message
                         showAlert("Deletion Error", "Could not delete the expense record.");
@@ -207,6 +211,11 @@ public class ExpenseScreen {
 
         expenseChart.getData().clear();
         expenseChart.getData().add(series);
+    }
+
+    @Override
+    public void refreshData() {
+        updateExpenseChart();
     }
 
     public VBox getView() {

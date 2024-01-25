@@ -1,0 +1,37 @@
+.budget-limit-bar  {
+    -fx-bar-fill: #DFDFDF;
+}
+
+.budget-spent-bar  {
+    -fx-bar-fill: #5D3587;
+}
+
+.budget-spent-bar-square {
+    -fx-fill: #5D3587;
+}
+
+.budget-limit-bar-square {
+    -fx-fill: #DFDFDF;
+}
+
+.legend-label {
+    -fx-font-size: 12px;
+    -fx-text-fill: #333;
+}
+
+.chart-horizontal-grid-lines, .chart-vertical-grid-lines {
+    -fx-opacity: 0;
+}
+
+.chart-axis-tick-mark {
+    -fx-opacity: 1;
+}
+
+.axis-label {
+    -fx-text-fill: black;
+}
+
+.chart-axis {
+    -fx-tick-label-fill: black;
+}
+

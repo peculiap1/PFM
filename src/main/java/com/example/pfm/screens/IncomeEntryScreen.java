@@ -82,7 +82,7 @@ public class IncomeEntryScreen {
         });
 
         Button backButton = new Button("Back");
-        backButton.setOnAction(e -> app.showDashboard());
+        backButton.setOnAction(e -> app.showMainScreen());
         GridPane.setConstraints(backButton, 1, 4);
 
         view.getChildren().addAll(amountLabel, amountField, sourceLabel, sourceDropdown, dateLabel, datePicker, saveButton, backButton);

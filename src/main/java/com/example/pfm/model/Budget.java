@@ -7,6 +7,7 @@ public class Budget {
     private int userId;
     private String category;
     private double budgetLimit;
+    private double spentAmount;
     private LocalDate date;
 
     public Budget() {
@@ -42,6 +43,14 @@ public class Budget {
         return date;
     }
 
+    public double getSpentAmount() {
+        return spentAmount;
+    }
+
+    public double getRemainingBudget() {
+        return budgetLimit - spentAmount;
+    }
+
     //Budget setters
 
     public void setId(int id) {
@@ -63,4 +72,9 @@ public class Budget {
     public void setDate(LocalDate date) {
         this.date = date;
     }
+
+    public void setSpentAmount(double spentAmount) {
+        this.spentAmount = spentAmount;
+    }
+
 }

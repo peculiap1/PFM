@@ -7,7 +7,9 @@ import javax.xml.transform.Result;
 import java.sql.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class ExpenseDAO {
 
@@ -150,6 +152,49 @@ public class ExpenseDAO {
             e.printStackTrace();
         }
         return 0.0;
+    }
+
+    // To get the total amount spent per category
+    public Map<String, Double> getTotalSpentPerCategory(int userId) {
+        Map<String, Double> categoryTotals = new HashMap<>();
+        String sql = "SELECT category, SUM(amount) AS total FROM expense WHERE user_id = ? AND MONTH(date) = ? AND YEAR(date) = ? GROUP BY category";
+        try (Connection conn = MySQLConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            LocalDate now = LocalDate.now();
+            stmt.setInt(1, userId);
+            stmt.setInt(2, now.getMonthValue());
+            stmt.setInt(3, now.getYear());
+
+            ResultSet rs = stmt.executeQuery();
+            while (rs.next()) {
+                String category = rs.getString("category");
+                double total = rs.getDouble("total");
+                categoryTotals.put(category, total);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return categoryTotals; //returns map of category totals
+    }
+
+    public double getTotalSpentForCategory(int userId, String category) {
+        double totalSpent = 0.0;
+        String sql = "SELECT SUM(amount) AS total FROM expense WHERE user_id = ? AND category = ? AND MONTH(date) = MONTH(CURRENT_DATE) AND YEAR(date) = YEAR(CURRENT_DATE)";
+        try (Connection conn = MySQLConnection.getConnection();
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+            stmt.setInt(1, userId);
+            stmt.setString(2, category);
+
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                totalSpent = rs.getDouble("total");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return totalSpent;
     }
 
 }

@@ -14,3 +14,36 @@
 .chart-axis {
     -fx-tick-label-fill: black;
 }
+
+.shopping-slice {
+    -fx-pie-color: #5D3587;
+}
+
+.travel-slice {
+    -fx-pie-color: #E0B1CB;
+}
+
+.groceries-slice {
+    -fx-pie-color: #2A5694;
+}
+
+.insurance-slice {
+    -fx-pie-color: #00B4D8;
+}
+
+.other-slice {
+    -fx-pie-color: #4A4E69
+}
+
+.utilities-slice {
+    -fx-pie-color: #4B8077
+}
+
+.entertainment-slice {
+    -fx-pie-color: #862813;
+}
+
+.hobbies-slice {
+    -fx-pie-color: #FF8761
+}
+
