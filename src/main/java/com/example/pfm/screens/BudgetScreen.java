@@ -6,6 +6,7 @@ import com.example.pfm.dao.BudgetDAO;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.model.Budget;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -15,6 +16,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import org.xml.sax.helpers.XMLReaderAdapter;
 
@@ -74,6 +76,8 @@ public class BudgetScreen implements DataRefresh {
         TableColumn<Budget, Double> limitColumn = new TableColumn<>("Budget Limit");
         limitColumn.setCellValueFactory(new PropertyValueFactory<>("budgetLimit"));
 
+        TableColumn<Budget, Number> overBudgetColumn = getBudgetNumberTableColumn();
+
         TableColumn<Budget, Void> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellFactory(col -> new TableCell<Budget, Void>() {
                     private final Button addButton = new Button("Add");
@@ -104,10 +108,40 @@ public class BudgetScreen implements DataRefresh {
                 });
 
 
-        budgetTableView.getColumns().addAll(categoryColumn, limitColumn, actionsColumn);
-        
+        budgetTableView.getColumns().addAll(categoryColumn, limitColumn, overBudgetColumn, actionsColumn);
+
         refreshBudgetTable();
         refreshBudgetBarChart();
+    }
+
+    private static TableColumn<Budget, Number> getBudgetNumberTableColumn() {
+        TableColumn<Budget, Number> overBudgetColumn = new TableColumn<>("Over Budget");
+        overBudgetColumn.setCellValueFactory(cellData -> {
+            Budget budget = cellData.getValue();
+            double overAmount = budget.getSpentAmount() - budget.getBudgetLimit();
+            return overAmount > 0 ? new SimpleDoubleProperty(overAmount) : new SimpleDoubleProperty(0);
+        });
+
+        overBudgetColumn.setCellFactory(column -> new TableCell<Budget, Number>() {
+            @Override
+            protected void updateItem(Number item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null) {
+                    setText(null);
+                    setStyle("");
+                } else {
+                    setText(String.format("€%.2f", item.doubleValue()));
+                    if (item.doubleValue() > 0) {
+                        setTextFill((Color.RED));
+                        setStyle("-fx-font-weight: bold;");
+                    } else {
+                        setTextFill(Color.BLACK);
+                        setStyle("");
+                    }
+                }
+            }
+        });
+        return overBudgetColumn;
     }
 
     private void createBudgetBarChart() {
@@ -259,9 +293,8 @@ public class BudgetScreen implements DataRefresh {
         List<Budget> budgets = budgetDAO.getAllBudgetsByUserId(userId);
         for (Budget budget : budgets) {
             double spent = expenseDAO.getTotalSpentForCategory(userId, budget.getCategory());
-            spentSeries.getData().add(new XYChart.Data<>(budget.getCategory(), spent));
-
             double limit = budget.getBudgetLimit() - spent;
+            spentSeries.getData().add(new XYChart.Data<>(budget.getCategory(), spent));
             limitSeries.getData().add(new XYChart.Data<>(budget.getCategory(), limit));
         }
 
@@ -278,6 +311,13 @@ public class BudgetScreen implements DataRefresh {
 
         Platform.runLater(() -> applyBarChartStyles(spentSeries, limitSeries));
     }
+
+    private Label createBudgetLabel(double overBudget) {
+        Label label = new Label(String.format("Over by €%.2f", overBudget));
+        label.getStyleClass().add("over-budget-label");
+        return label;
+    }
+
     //Method to set the upperbound of the Y-axis to the highest budget limit
     private double getMaxBudgetLimit() {
         double maxLimit = 0;
@@ -327,6 +367,21 @@ public class BudgetScreen implements DataRefresh {
             Node node = data.getNode();
             if (node != null) {
                 node.getStyleClass().add("budget-limit-bar");
+            }
+        }
+        for (int i = 0; i < spentSeries.getData().size(); i++) {
+            XYChart.Data<String, Number> spentData = spentSeries.getData().get(i);
+            XYChart.Data<String, Number> limitData = limitSeries.getData().get(i);
+            Node spentNode = spentData.getNode();
+            double spentAmount = spentData.getYValue().doubleValue();
+            double limitAmount = limitData.getYValue().doubleValue() + spentAmount;
+
+            if (spentNode != null) {
+                if (spentAmount > limitAmount) {
+                    spentNode.getStyleClass().add("budget-over-spent-bar");
+                } else {
+                    spentNode.getStyleClass().add("budget-spent-bar");
+                }
             }
         }
     }
