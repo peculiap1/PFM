@@ -9,6 +9,7 @@ import com.example.pfm.model.Income;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.layout.VBox;
+import javafx.stage.Stage;
 
 public class MainScreen{
     private VBox view;
@@ -20,6 +21,8 @@ public class MainScreen{
     private ExpenseScreen expenseScreen;
     private BudgetScreen budgetScreen;
     private DashboardScreen dashboardScreen;
+    private ReportScreen reportScreen;
+    private Stage primaryStage;
     private int userId;
 
 
@@ -31,7 +34,9 @@ public class MainScreen{
                       IncomeScreen incomeScreen,
                       ExpenseScreen expenseScreen,
                       BudgetScreen budgetScreen,
-                      DashboardScreen dashboardScreen) {
+                      DashboardScreen dashboardScreen,
+                      ReportScreen reportScreen,
+                      Stage primaryStage) {
         this.app = app;
         this.incomeDAO = incomeDAO;
         this.expenseDAO = expenseDAO;
@@ -41,7 +46,11 @@ public class MainScreen{
         this.expenseScreen = expenseScreen;
         this.budgetScreen = budgetScreen;
         this.dashboardScreen = dashboardScreen;
+        this.reportScreen = reportScreen;
+        this.primaryStage = primaryStage;
         createView();
+
+        view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/mainscreen.css").toExternalForm());
     }
 
 
@@ -53,12 +62,6 @@ public class MainScreen{
         Tab dashboardTab = new Tab("Dashboard");
         dashboardTab.setContent(new DashboardScreen(app, incomeDAO, expenseDAO, budgetDAO, userId).getView());
         dashboardTab.setClosable(false);
-
-        dashboardTab.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-            if (isSelected) {
-                dashboardScreen.refreshData();
-            }
-        });
 
         Tab incomesTab = new Tab("Incomes");
         incomesTab.setContent(new IncomeScreen(app, new IncomeDAO(), app.getUserService().getCurrentUserId()).getView());
@@ -73,13 +76,11 @@ public class MainScreen{
         budgetTab.setContent(new BudgetScreen(app, budgetDAO, expenseDAO, userId).getView());
         budgetTab.setClosable(false);
 
-        budgetTab.selectedProperty().addListener((obs, wasSelected, isSelected) -> {
-            if (isSelected) {
-                dashboardScreen.refreshData();
-            }
-        });
+        Tab reportTab = new Tab("Report");
+        reportTab.setContent(new ReportScreen(app, incomeDAO, expenseDAO, primaryStage).getView());
+        reportTab.setClosable(false);
 
-        tabPane.getTabs().addAll(dashboardTab, incomesTab, expensesTab, budgetTab);
+        tabPane.getTabs().addAll(dashboardTab, incomesTab, expensesTab, budgetTab, reportTab);
         view.getChildren().add(tabPane);
     }
 
@@ -88,6 +89,7 @@ public class MainScreen{
         incomeScreen.refreshData();
         expenseScreen.refreshData();
         budgetScreen.refreshData();
+        reportScreen.refreshData();
     }
 
     public VBox getView() {

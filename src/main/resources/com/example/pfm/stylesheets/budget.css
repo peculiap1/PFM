@@ -1,3 +1,7 @@
+.view {
+    -fx-font-family: 'Open Sans';
+}
+
 .budget-limit-bar  {
     -fx-bar-fill: #DFDFDF;
 }

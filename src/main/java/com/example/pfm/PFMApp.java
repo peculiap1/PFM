@@ -9,6 +9,7 @@ import com.example.pfm.service.UserService;
 import javafx.application.Application;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -26,11 +27,14 @@ public class PFMApp extends Application {
     private ExpenseScreen expenseScreen;
     private BudgetScreen budgetScreen;
     private DashboardScreen dashboardScreen;
+    private ReportScreen reportScreen;
     private List<DataRefresh> refreshListeners = new ArrayList<>();
 
 
     @Override
     public void start(Stage primaryStage) {
+        Font.loadFont(getClass().getResourceAsStream("/fonts/OpenSans-VariableFont_wdth,wght.ttf"), 14);
+
         userService = new UserService();
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("PFM - Login");
@@ -41,9 +45,9 @@ public class PFMApp extends Application {
         this.expenseScreen = new ExpenseScreen(this, expenseDAO, userService.getCurrentUserId());
         this.budgetScreen = new BudgetScreen(this, budgetDAO, expenseDAO, userService.getCurrentUserId());
         this.dashboardScreen = new DashboardScreen(this, incomeDAO, expenseDAO, budgetDAO, userService.getCurrentUserId());
+        this.reportScreen = new ReportScreen(this, incomeDAO, expenseDAO, primaryStage);
 
-        this.mainScreen = new MainScreen( this, incomeDAO, expenseDAO, budgetDAO, userService.getCurrentUserId(), incomeScreen, expenseScreen, budgetScreen, dashboardScreen);
-
+        this.mainScreen = new MainScreen( this, incomeDAO, expenseDAO, budgetDAO, userService.getCurrentUserId(), incomeScreen, expenseScreen, budgetScreen, dashboardScreen, reportScreen, primaryStage);
         showLoginScreen();
     }
 
@@ -108,7 +112,7 @@ public class PFMApp extends Application {
 
     public void showMainScreen() {
         int currentUserId = userService.getCurrentUserId();
-        MainScreen mainScreen = new MainScreen(this, incomeDAO, expenseDAO, budgetDAO, currentUserId, incomeScreen, expenseScreen, budgetScreen, dashboardScreen);
+        MainScreen mainScreen = new MainScreen(this, incomeDAO, expenseDAO, budgetDAO, currentUserId, incomeScreen, expenseScreen, budgetScreen, dashboardScreen, reportScreen, primaryStage);
         Scene scene = new Scene(mainScreen.getView(), 1204, 768);
         primaryStage.setScene(scene);
         primaryStage.setTitle("PFM");
@@ -119,7 +123,14 @@ public class PFMApp extends Application {
         BudgetScreen budgetScreen = new BudgetScreen(this, budgetDAO, expenseDAO, currentUserId);
         Scene scene = new Scene(budgetScreen.getView(), 1204, 768);
         primaryStage.setScene(scene);
-        primaryStage.setTitle("PFM - Budget Screen");
+        primaryStage.setTitle("PFM - Budget");
+    }
+
+    public void showReportScreen() {
+        ReportScreen reportScreen = new ReportScreen(this, incomeDAO, expenseDAO, primaryStage);
+        Scene scene = new Scene(reportScreen.getView());
+        primaryStage.setScene(scene);
+        primaryStage.setTitle("PFM - Report");
     }
 
     public void registerListener(DataRefresh listener) {

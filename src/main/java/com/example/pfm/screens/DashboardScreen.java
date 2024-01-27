@@ -7,6 +7,7 @@ import com.example.pfm.dao.IncomeDAO;
 import com.example.pfm.model.Budget;
 import javafx.application.Application;
 import javafx.application.Platform;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
 import javafx.scene.control.Button;
@@ -16,9 +17,6 @@ import javafx.scene.layout.VBox;
 public class DashboardScreen implements DataRefresh{
     private VBox view;
     private PFMApp app;
-
-    private Label totalIncomeLabel;
-    private Label totalExpenseLabel;
 
     private StackedBarChart<Number, String> financeChart;
     private IncomeDAO incomeDAO;
@@ -51,20 +49,20 @@ public class DashboardScreen implements DataRefresh{
 
     private void createView() {
         view = new VBox(10);
-        totalIncomeLabel = new Label("Total Income This Month: Calculating...");
-        totalExpenseLabel = new Label("Total Expenses This Month: Calculating... ");
 
         //Income Button
         Button addIncomeButton = new Button("Add Income");
+        VBox.setMargin(addIncomeButton, new Insets(10));
         addIncomeButton.setOnAction(e -> app.showIncomeEntryScreen());
 
         //Expense Button
         Button addExpenseButton = new Button("Add Expense");
+        VBox.setMargin(addExpenseButton, new Insets(10));
         addExpenseButton.setOnAction(e -> app.showExpenseEntryScreen());
 
         /** other UI components **/
 
-        view.getChildren().addAll(addIncomeButton, addExpenseButton, totalIncomeLabel, totalExpenseLabel);
+        view.getChildren().addAll(addIncomeButton, addExpenseButton);
     }
 
     private void createFinanceChart() {
@@ -116,6 +114,7 @@ public class DashboardScreen implements DataRefresh{
         });
 
         pieChart.setLegendVisible(false);
+        pieChart.setTitle("Expenses Budgets");
 
         return pieChart;
     }
@@ -163,10 +162,6 @@ public class DashboardScreen implements DataRefresh{
         int userId = app.getUserService().getCurrentUserId();
         double totalIncome = incomeDAO.getTotalIncomeForCurrentMonth(userId);
         double totalExpense = expenseDAO.getTotalExpenseForCurrentMonth(userId);
-
-
-        totalIncomeLabel.setText("Total Income For This Month: " + totalIncome);
-        totalExpenseLabel.setText("Total Expenses For This Month: " + totalExpense);
 
         double profitOrLoss = Math.abs(totalIncome - totalExpense);
 

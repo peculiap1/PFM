@@ -8,6 +8,7 @@ import com.example.pfm.model.Budget;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.collections.FXCollections;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.chart.*;
@@ -64,6 +65,7 @@ public class BudgetScreen implements DataRefresh {
         Node customLegend = createCustomLegend();
 
         Button addButton = new Button("Add Budget");
+        VBox.setMargin(addButton, new Insets(10));
         addButton.setOnAction(e -> showAddEditBudgetForm(null));
 
         view.getChildren().addAll(budgetTableView, addButton, customLegend);

@@ -1,0 +1,25 @@
+.view {
+    -fx-font-family: 'Open Sans';
+    -fx-font-size: 18px;
+}
+
+#report-title {
+    -fx-font-size: 32px;
+    -fx-font-weight: bold;
+}
+
+#category-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 24px;
+}
+
+.list-cell {
+    -fx-background-color: #f4f4f4;
+}
+
+#financial-advice-text {
+    -fx-font-style: italic;
+    -fx-background-color: #4A4E69;
+    -fx-text-fill: white;
+}
+
