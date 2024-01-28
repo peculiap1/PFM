@@ -1,7 +1,12 @@
 * {
-    -fx-primary-color:  #5D3587;
+    -fx-primary-color: #5D3587;
     -fx-accent-color: #B09CD9;
 }
+
+.view {
+    -fx-font-family: 'Open Sans';
+}
+
 .button {
     -fx-background-color: -fx-primary-color;
     -fx-text-fill: white;
@@ -14,34 +19,14 @@
     -fx-text-fill: white;
 }
 
-
-
-.chart-bar {
-    -fx-bar-fill: -fx-primary-color;
-}
-
-.chart-horizontal-grid-lines, .chart-vertical-grid-lines {
-    -fx-opacity: 0;
-}
-
-.chart-axis-tick-mark {
-    -fx-opacity: 1;
-}
-
-.axis-label {
-    -fx-text-fill: black;
-}
-
-.chart-axis {
-    -fx-tick-label-fill: black;
-}
-
-.amount-field {
+.text-field {
     -fx-background-color: white;
+    -fx-border-radius: 5px;
 }
 
-.amount-field:focused {
+.text-field:focused {
     -fx-border-color: -fx-primary-color;
+    -fx-border-radius: 5px;
 }
 
 .combo-box {

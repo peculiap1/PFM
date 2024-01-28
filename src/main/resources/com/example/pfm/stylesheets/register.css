@@ -1,0 +1,21 @@
+.button {
+    -fx-background-color: #5D3587;
+    -fx-text-fill: white;
+    -fx-padding: 5 10;
+    -fx-border-radius: 10px;
+}
+
+.button:pressed {
+    -fx-background-color: #B09CD9;
+    -fx-text-fill: white;
+}
+
+.text-field {
+    -fx-background-color: white;
+    -fx-border-radius: 5px;
+}
+
+.text-field:focused {
+    -fx-border-color: #5D3587;
+    -fx-border-radius: 5px;
+}

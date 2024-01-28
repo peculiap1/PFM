@@ -80,15 +80,22 @@ public class IncomeScreen implements DataRefresh{
             private void openIncomeEditForm(Income selectedIncome) {
                 Dialog<Income> dialog = new Dialog<>();
                 dialog.setTitle("Edit Income");
+                dialog.setHeight(275);
+                dialog.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/income.css").toExternalForm());
 
                 ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
                 TextField amountField = new TextField(String.valueOf(selectedIncome.getAmount()));
+                amountField.getStyleClass().add("amount-field");
+
                 ComboBox<String> sourceField = new ComboBox<>();
                 sourceField.getItems().addAll("Salary", "Freelance", "Investment", "Allowance", "Other");
                 sourceField.setValue(selectedIncome.getSource());
+                sourceField.getStyleClass().add("source-field");
+
                 DatePicker datePicker = new DatePicker(selectedIncome.getDate());
+                datePicker.getStyleClass().add("date-picker");
 
                 GridPane grid = new GridPane();
                 grid.add(new Label("Amount:"), 0, 0);
@@ -97,6 +104,7 @@ public class IncomeScreen implements DataRefresh{
                 grid.add(sourceField, 1, 1);
                 grid.add(new Label("Date:"), 0, 2);
                 grid.add(datePicker, 1, 2);
+                grid.setVgap(10);
 
                 dialog.getDialogPane().setContent(grid);
 
@@ -138,6 +146,9 @@ public class IncomeScreen implements DataRefresh{
                 alert.setTitle(title);
                 alert.setHeaderText(null);
                 alert.setContentText(message);
+
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/income.css").toExternalForm());
+
                 alert.showAndWait();
             }
 
@@ -146,6 +157,8 @@ public class IncomeScreen implements DataRefresh{
                 confirmationAlert.setTitle("Confirm Delete");
                 confirmationAlert.setHeaderText(null);
                 confirmationAlert.setContentText("This action cannot be undone.");
+
+                confirmationAlert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/income.css").toExternalForm());
 
                 Optional<ButtonType> result = confirmationAlert.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {

@@ -22,6 +22,8 @@ public class IncomeEntryScreen {
         this.app = app;
         this.userId = userId;
         createView();
+
+        view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/income-entry.css").toExternalForm());
     }
 
     private void createView() {
@@ -99,6 +101,9 @@ public class IncomeEntryScreen {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/income-entry.css").toExternalForm());
+
 
         if (navigateBack) {
             alert.setOnHidden(evt -> app.showMainScreen());

@@ -113,5 +113,12 @@ public class UserService {
     public boolean addExpense(Expense expense) {
         return expenseDAO.insertExpense(expense);
     }
-
+    public String getCurrentUsername() {
+        return loggedInUser != null ? loggedInUser.getUsername() : null;
+    }
+    public void logoutUser() {
+        loggedInUser = null;
+        loginAttempts.clear();
+        lockoutExpiry.clear();
+    }
 }

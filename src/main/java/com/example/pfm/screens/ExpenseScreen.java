@@ -81,6 +81,8 @@ public class ExpenseScreen implements DataRefresh {
             private void openExpenseEditForm(Expense selectedExpense) {
                 Dialog<Expense> dialog = new Dialog<>();
                 dialog.setTitle("Edit Expense");
+                dialog.setHeight(275);
+                dialog.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/expense.css").toExternalForm());
 
                 ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
@@ -98,6 +100,8 @@ public class ExpenseScreen implements DataRefresh {
                 grid.add(categoryField, 1, 1);
                 grid.add(new Label("Date:"), 0, 2);
                 grid.add(datePicker, 1, 2);
+
+                grid.setVgap(10);
 
                 dialog.getDialogPane().setContent(grid);
 
@@ -138,6 +142,9 @@ public class ExpenseScreen implements DataRefresh {
                 alert.setTitle(title);
                 alert.setHeaderText(null);
                 alert.setContentText(message);
+
+                alert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/expense.css").toExternalForm());
+
                 alert.showAndWait();
             }
 
@@ -146,6 +153,8 @@ public class ExpenseScreen implements DataRefresh {
                 confirmationAlert.setTitle("Confirm Delete");
                 confirmationAlert.setHeaderText(null);
                 confirmationAlert.setContentText("This action cannot be undone.");
+
+                confirmationAlert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/expense.css").toExternalForm());
 
                 Optional<ButtonType> result = confirmationAlert.showAndWait();
                 if (result.isPresent() && result.get() == ButtonType.OK) {

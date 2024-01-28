@@ -22,6 +22,9 @@ public class ExpenseEntryScreen {
         this.app = app;
         this.userId = userId;
         createView();
+
+        view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/expense-entry.css").toExternalForm());
+
     }
 
     private void createView() {
@@ -98,6 +101,9 @@ public class ExpenseEntryScreen {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/expense-entry.css").toExternalForm());
+
 
         if (navigateBack) {
             alert.setOnHidden(evt -> app.showMainScreen());

@@ -16,6 +16,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -177,6 +178,9 @@ public class BudgetScreen implements DataRefresh {
     private void showAddEditBudgetForm(Budget budget) {
         Dialog<Budget> dialog = new Dialog<>();
         dialog.setTitle((budget == null) ? "Add New Budget" : "Edit Budget");
+        dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
+        dialog.getDialogPane().setPrefHeight(225);
+        dialog.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/budget.css").toExternalForm());
 
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
@@ -205,6 +209,8 @@ public class BudgetScreen implements DataRefresh {
         grid.add(categoryDropdown, 1, 0);
         grid.add(new Label("Budget Limit:"), 0, 1);
         grid.add(limitField, 1, 1);
+
+        grid.setVgap(10);
 
         dialog.getDialogPane().setContent(grid);
 
@@ -239,7 +245,6 @@ public class BudgetScreen implements DataRefresh {
                 budgetDAO.updateBudget(newBudget);
             }
             refreshBudgetTable();
-            refreshBudgetBarChart();
             app.onDataChanged();
         });
     }
@@ -249,6 +254,9 @@ public class BudgetScreen implements DataRefresh {
         alert.setTitle(title);
         alert.setHeaderText(null);
         alert.setContentText(message);
+
+        alert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/budget.css").toExternalForm());
+
         alert.showAndWait();
     }
 
@@ -257,6 +265,8 @@ public class BudgetScreen implements DataRefresh {
         confirmationAlert.setTitle("Confirm Delete");
         confirmationAlert.setHeaderText(null);
         confirmationAlert.setContentText("This action cannot be undone.");
+
+        confirmationAlert.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/budget.css").toExternalForm());
 
         Optional<ButtonType> result = confirmationAlert.showAndWait();
         if (result.isPresent() && result.get() == ButtonType.OK) {
@@ -286,6 +296,8 @@ public class BudgetScreen implements DataRefresh {
 
     private void refreshBudgetBarChart() {
         budgetBarChart.getData().clear();
+        CategoryAxis xAxis = (CategoryAxis) budgetBarChart.getXAxis();
+        xAxis.getCategories().clear();
 
         XYChart.Series<String, Number> spentSeries = new XYChart.Series<>();
         spentSeries.setName("Spent");
@@ -298,10 +310,10 @@ public class BudgetScreen implements DataRefresh {
             double limit = budget.getBudgetLimit() - spent;
             spentSeries.getData().add(new XYChart.Data<>(budget.getCategory(), spent));
             limitSeries.getData().add(new XYChart.Data<>(budget.getCategory(), limit));
+            xAxis.getCategories().add(budget.getCategory());
         }
 
-        budgetBarChart.getData().add(spentSeries);
-        budgetBarChart.getData().add(limitSeries);
+        budgetBarChart.getData().addAll(spentSeries, limitSeries);
         budgetBarChart.setLegendVisible(false);
 
         //Adjusting the Y-axis upper bound
@@ -312,12 +324,7 @@ public class BudgetScreen implements DataRefresh {
         yAxis.setTickUnit(50);
 
         Platform.runLater(() -> applyBarChartStyles(spentSeries, limitSeries));
-    }
-
-    private Label createBudgetLabel(double overBudget) {
-        Label label = new Label(String.format("Over by €%.2f", overBudget));
-        label.getStyleClass().add("over-budget-label");
-        return label;
+        budgetBarChart.setAnimated(false); //this is set to false because the animation misaligned the xAis labels
     }
 
     //Method to set the upperbound of the Y-axis to the highest budget limit

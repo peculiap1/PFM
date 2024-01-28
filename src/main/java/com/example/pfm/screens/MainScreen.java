@@ -4,15 +4,26 @@ import com.example.pfm.PFMApp;
 import com.example.pfm.dao.BudgetDAO;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.dao.IncomeDAO;
-import com.example.pfm.model.Budget;
-import com.example.pfm.model.Income;
+import com.example.pfm.model.User;
+import javafx.geometry.Side;
+import javafx.scene.control.ContextMenu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class MainScreen{
     private VBox view;
+    private BorderPane borderPane;
+    private VBox userIconVBox;
+    private ImageView userIcon;
+    private ContextMenu contextMenu;
     private PFMApp app;
     private IncomeDAO incomeDAO;
     private ExpenseDAO expenseDAO;
@@ -24,6 +35,8 @@ public class MainScreen{
     private ReportScreen reportScreen;
     private Stage primaryStage;
     private int userId;
+    private User user;
+
 
 
     public MainScreen(PFMApp app,
@@ -49,14 +62,14 @@ public class MainScreen{
         this.reportScreen = reportScreen;
         this.primaryStage = primaryStage;
         createView();
-
-        view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/mainscreen.css").toExternalForm());
     }
 
 
 
     private void createView() {
-        view= new VBox();
+        view = new VBox();
+        borderPane = new BorderPane();
+        borderPane.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/mainscreen.css").toExternalForm());
         TabPane tabPane = new TabPane();
 
         Tab dashboardTab = new Tab("Dashboard");
@@ -82,18 +95,46 @@ public class MainScreen{
 
         tabPane.getTabs().addAll(dashboardTab, incomesTab, expensesTab, budgetTab, reportTab);
         view.getChildren().add(tabPane);
+
+        userIconVBox = new VBox();
+        userIconVBox.getStyleClass().add("right-panel");
+
+        userIcon = new ImageView(new Image(getClass().getResourceAsStream("/images/icons/profile.png")));
+        userIcon.setFitHeight(50);
+        userIcon.setFitWidth(50);
+        userIcon.setPickOnBounds(true);
+        userIcon.setOnMouseClicked(e -> {
+            if (e.getButton() == MouseButton.PRIMARY) {
+                openContextMenu(e);
+            }
+        });
+        userIconVBox.getChildren().add(userIcon);
+        borderPane.setCenter(view);
+        borderPane.setRight(userIconVBox);
     }
 
-    public void refreshAllTabs() {
-        dashboardScreen.refreshData();
-        incomeScreen.refreshData();
-        expenseScreen.refreshData();
-        budgetScreen.refreshData();
-        reportScreen.refreshData();
+    private void openContextMenu(MouseEvent e) {
+        if(contextMenu == null) {
+            contextMenu = new ContextMenu();
+            MenuItem logoutItem = new MenuItem("Logout");
+            logoutItem.setOnAction(event -> logout());
+            contextMenu.getItems().add(logoutItem);
+        }
+        if (contextMenu.isShowing()) {
+            contextMenu.hide(); // to hide the menu when its already showing
+        } else {
+            contextMenu.show(userIcon, Side.LEFT, 0, 0);
+        }
+
     }
 
-    public VBox getView() {
-        return view;
+    private void logout() {
+        app.getUserService().logoutUser();
+        app.showLoginScreen();
+    }
+
+    public BorderPane getView() {
+        return borderPane;
     }
 
 }

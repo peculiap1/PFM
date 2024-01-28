@@ -1,5 +1,22 @@
+* {
+    -fx-primary-color: #5D3587;
+    -fx-accent-color: #B09CD9;
+}
+
 .view {
     -fx-font-family: 'Open Sans';
+}
+
+.button {
+    -fx-background-color: -fx-primary-color;
+    -fx-text-fill: white;
+    -fx-padding: 5 10;
+    -fx-border-radius: 10px;
+}
+
+.button:pressed {
+    -fx-background-color: -fx-accent-color;
+    -fx-text-fill: white;
 }
 
 .budget-limit-bar  {
@@ -44,3 +61,30 @@
     -fx-tick-label-fill: black;
 }
 
+.text-field {
+    -fx-background-color: white;
+}
+
+.text-field:focused {
+    -fx-border-color: -fx-primary-color;
+}
+
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-radius: 5px;
+}
+
+.combo-box:focused {
+    -fx-border-color: -fx-primary-color;
+    -fx-border-radius: 5px;
+}
+
+.combo-box .list-view .list-cell:hover {
+    -fx-background-color: -fx-accent-color;
+    -fx-border-radius: 5px;
+}
+
+.combo-box .list-view .list-cell:focused {
+    -fx-background-color: -fx-primary-color;
+    -fx-border-radius: 5px
+}

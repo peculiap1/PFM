@@ -4,6 +4,7 @@ import com.example.pfm.dao.BudgetDAO;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.dao.IncomeDAO;
 import com.example.pfm.model.Income;
+import com.example.pfm.model.User;
 import com.example.pfm.screens.*;
 import com.example.pfm.service.UserService;
 import javafx.application.Application;
@@ -19,6 +20,7 @@ public class PFMApp extends Application {
 
     private Stage primaryStage;
     private UserService userService;
+    private User user;
     private IncomeDAO incomeDAO;
     private ExpenseDAO expenseDAO;
     private BudgetDAO budgetDAO;
@@ -35,6 +37,7 @@ public class PFMApp extends Application {
     public void start(Stage primaryStage) {
         Font.loadFont(getClass().getResourceAsStream("/fonts/OpenSans-VariableFont_wdth,wght.ttf"), 14);
 
+        user = new User();
         userService = new UserService();
         this.primaryStage = primaryStage;
         this.primaryStage.setTitle("PFM - Login");
@@ -57,17 +60,19 @@ public class PFMApp extends Application {
 
     public void showLoginScreen() {
         LoginScreen loginScreen = new LoginScreen(this, userService);
-        Scene scene = new Scene(LoginScreen.getView(), 400, 275);
+        Scene scene = new Scene(LoginScreen.getView(), 807, 500);
         primaryStage.setScene(scene);
         primaryStage.setTitle("PFM - Login");
         primaryStage.show();
+        primaryStage.setResizable(false);
     }
 
     public void showRegistrationScreen() {
         RegistrationScreen registrationScreen = new RegistrationScreen(this, userService);
-        Scene scene = new Scene(registrationScreen.getView(),400, 275);
+        Scene scene = new Scene(registrationScreen.getView(),807, 500);
         primaryStage.setScene(scene);
         primaryStage.setTitle("PFM - Register");
+        primaryStage.setResizable(false);
     }
 
     public void showIncomeEntryScreen() {
@@ -86,51 +91,13 @@ public class PFMApp extends Application {
         primaryStage.setTitle("PFM - Add Expense");
     }
 
-    public void showDashboard() {
-        int currentUserId = userService.getCurrentUserId();
-        DashboardScreen dashboardScreen = new DashboardScreen(this, incomeDAO, expenseDAO, budgetDAO, currentUserId);
-        Scene scene = new Scene(dashboardScreen.getView(), 1024, 768);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("PFM - Dashboard");
-    }
-
-    public void showIncomeScreen() {
-        int currentUserId = userService.getCurrentUserId();
-        IncomeScreen incomeScreen = new IncomeScreen(this, incomeDAO, currentUserId);
-        Scene scene = new Scene(incomeScreen.getView(), 1024, 768);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("PFM - Income");
-    }
-
-    public void showExpenseScreen() {
-        int currentUserId = userService.getCurrentUserId();
-        ExpenseScreen expenseScreen = new ExpenseScreen(this, expenseDAO, currentUserId);
-        Scene scene = new Scene(expenseScreen.getView(), 1204, 768);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("PFM - Expense");
-    }
-
     public void showMainScreen() {
         int currentUserId = userService.getCurrentUserId();
         MainScreen mainScreen = new MainScreen(this, incomeDAO, expenseDAO, budgetDAO, currentUserId, incomeScreen, expenseScreen, budgetScreen, dashboardScreen, reportScreen, primaryStage);
         Scene scene = new Scene(mainScreen.getView(), 1204, 768);
         primaryStage.setScene(scene);
+        scene.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/mainscreen.css").toExternalForm());
         primaryStage.setTitle("PFM");
-    }
-
-    public void showBudgetScreen() {
-        int currentUserId = userService.getCurrentUserId();
-        BudgetScreen budgetScreen = new BudgetScreen(this, budgetDAO, expenseDAO, currentUserId);
-        Scene scene = new Scene(budgetScreen.getView(), 1204, 768);
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("PFM - Budget");
-    }
-
-    public void showReportScreen() {
-        ReportScreen reportScreen = new ReportScreen(this, incomeDAO, expenseDAO, primaryStage);
-        Scene scene = new Scene(reportScreen.getView());
-        primaryStage.setScene(scene);
-        primaryStage.setTitle("PFM - Report");
     }
 
     public void registerListener(DataRefresh listener) {

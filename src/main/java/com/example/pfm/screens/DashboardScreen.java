@@ -5,6 +5,7 @@ import com.example.pfm.dao.BudgetDAO;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.dao.IncomeDAO;
 import com.example.pfm.model.Budget;
+import com.example.pfm.model.User;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -17,6 +18,7 @@ import javafx.scene.layout.VBox;
 public class DashboardScreen implements DataRefresh{
     private VBox view;
     private PFMApp app;
+    private Label welcomeLabel;
 
     private StackedBarChart<Number, String> financeChart;
     private IncomeDAO incomeDAO;
@@ -50,6 +52,17 @@ public class DashboardScreen implements DataRefresh{
     private void createView() {
         view = new VBox(10);
 
+        //Welcome Label
+        welcomeLabel = new Label();
+        String username = app.getUserService().getCurrentUsername();
+        if (username != null) {
+            welcomeLabel.setText("Welcome, " + username + "!");
+        } else {
+            welcomeLabel.setText("Welcome!");
+        }
+        welcomeLabel.getStyleClass().add("welcome-label");
+        VBox.setMargin(welcomeLabel, new Insets(10));
+
         //Income Button
         Button addIncomeButton = new Button("Add Income");
         VBox.setMargin(addIncomeButton, new Insets(10));
@@ -62,7 +75,7 @@ public class DashboardScreen implements DataRefresh{
 
         /** other UI components **/
 
-        view.getChildren().addAll(addIncomeButton, addExpenseButton);
+        view.getChildren().addAll(welcomeLabel, addIncomeButton, addExpenseButton);
     }
 
     private void createFinanceChart() {

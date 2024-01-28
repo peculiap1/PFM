@@ -1,3 +1,10 @@
+* {
+    -fx-primary-color: #5D3587;
+    -fx-accent-color: #B09CD9;
+    -fx-gray-color: #4A4E90;
+}
+
+
 .view {
     -fx-font-family: 'Open Sans';
     -fx-font-size: 18px;
@@ -15,6 +22,14 @@
 
 .list-cell {
     -fx-background-color: #f4f4f4;
+}
+
+.list-cell:filled:selected, .list-cell:filled:selected:focused {
+  -fx-text-fill: black;
+}
+
+.list-view:focused {
+    -fx-focus-color: -fx-primary-color;
 }
 
 #financial-advice-text {
