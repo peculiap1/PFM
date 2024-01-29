@@ -18,6 +18,12 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
+/**
+ * MainScreen class serves as the central hub of the Personal Finance Manager (PFM) application,
+ * hosting various functional tabs like Dashboard, Incomes, Expenses, Budgets, and Report.
+ * It also provides a user context menu for actions such as logging out.
+ */
+
 public class MainScreen{
     private VBox view;
     private BorderPane borderPane;
@@ -35,9 +41,22 @@ public class MainScreen{
     private ReportScreen reportScreen;
     private Stage primaryStage;
     private int userId;
-    private User user;
 
-
+    /**
+     * Constructs the MainScreen with necessary dependencies and initializes the UI components.
+     *
+     * @param app               The main application instance for navigation and data handling.
+     * @param incomeDAO         Data access object for income-related operations.
+     * @param expenseDAO        Data access object for expense-related operations.
+     * @param budgetDAO         Data access object for budget-related operations.
+     * @param userId            The ID of the currently logged-in user.
+     * @param incomeScreen      The income screen for income management.
+     * @param expenseScreen     The expense screen for expense management.
+     * @param budgetScreen      The budget screen for budget management.
+     * @param dashboardScreen   The dashboard screen for displaying summary information.
+     * @param reportScreen      The report screen for generating financial reports.
+     * @param primaryStage      The primary stage of the application.
+     */
 
     public MainScreen(PFMApp app,
                       IncomeDAO incomeDAO,
@@ -65,12 +84,17 @@ public class MainScreen{
     }
 
 
-
+    /**
+     * Initializes the UI components of the main screen, including the tab pane for different application
+     * sections and the user profile icon with its context menu for logging out.
+     */
     private void createView() {
         view = new VBox();
         borderPane = new BorderPane();
         borderPane.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/mainscreen.css").toExternalForm());
         TabPane tabPane = new TabPane();
+
+        // Setup for each application tab (Dashboard, Incomes, Expenses, etc.)
 
         Tab dashboardTab = new Tab("Dashboard");
         dashboardTab.setContent(new DashboardScreen(app, incomeDAO, expenseDAO, budgetDAO, userId).getView());
@@ -96,6 +120,8 @@ public class MainScreen{
         tabPane.getTabs().addAll(dashboardTab, incomesTab, expensesTab, budgetTab, reportTab);
         view.getChildren().add(tabPane);
 
+        // Setup for user icon and its click action to open the context menu
+
         userIconVBox = new VBox();
         userIconVBox.getStyleClass().add("right-panel");
 
@@ -113,6 +139,13 @@ public class MainScreen{
         borderPane.setRight(userIconVBox);
     }
 
+    /**
+     * Handles the opening and closing of the context menu upon clicking the user icon. This menu provides
+     * user-specific actions such as logging out.
+     *
+     * @param e MouseEvent that triggers the context menu action.
+     */
+
     private void openContextMenu(MouseEvent e) {
         if(contextMenu == null) {
             contextMenu = new ContextMenu();
@@ -128,11 +161,19 @@ public class MainScreen{
 
     }
 
+    /**
+     * Logs out the current user and navigates back to the login screen.
+     */
     private void logout() {
         app.getUserService().logoutUser();
         app.showLoginScreen();
     }
 
+    /**
+     * Provides access to the main screen's view component, which includes all UI elements.
+     *
+     * @return The BorderPane that contains the main screen's layout.
+     */
     public BorderPane getView() {
         return borderPane;
     }

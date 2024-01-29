@@ -2,18 +2,33 @@ package com.example.pfm.model;
 
 import java.time.LocalDate;
 
+/**
+ * Represents a budget entity within the PFM application.
+ * A budget is defined for a specific category and is associated with a user.
+ */
 public class Budget {
-    private int id;
-    private int userId;
-    private String category;
-    private double budgetLimit;
-    private double spentAmount;
-    private LocalDate date;
+    private int id; // Unique identifier for the budget.
+    private int userId; // Identifier of the user to whom the budget belongs.
+    private String category; // The category the budget is set for.
+    private double budgetLimit; // The limit set for this budget
+    private double spentAmount; // The amount already spent within this budget's category.
+    private LocalDate date; // The date representing the month and year the budget is set for.
 
+    /**
+     * Default constructor for creating a Budget instance without setting properties initially.
+     */
     public Budget() {
     }
 
-    // Budget constructor
+    /**
+     * Constructs a Budget with specified details.
+     *
+     * @param id The budget's unique identifier.
+     * @param userId The identifier of the user this budget is associated with.
+     * @param category The category this budget is allocated to.
+     * @param budgetLimit The limit set for the budget.
+     * @param date The date the budget is set for, representing a month and year.
+     */
     public Budget(int id, int userId, String category, double budgetLimit, LocalDate date) {
         this.id = id;
         this.userId = userId;
@@ -47,9 +62,6 @@ public class Budget {
         return spentAmount;
     }
 
-    public double getRemainingBudget() {
-        return budgetLimit - spentAmount;
-    }
 
     //Budget setters
 
@@ -76,5 +88,4 @@ public class Budget {
     public void setSpentAmount(double spentAmount) {
         this.spentAmount = spentAmount;
     }
-
 }

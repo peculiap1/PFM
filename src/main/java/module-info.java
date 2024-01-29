@@ -2,6 +2,7 @@ module com.example.pfm {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires jbcrypt;
 
 
     opens com.example.pfm to javafx.fxml;

@@ -21,7 +21,13 @@ import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
+/**
+ * The IncomeScreen class provides a user interface for viewing and managing income records.
+ * It includes a table for displaying income details and a bar chart for visualizing monthly income totals.
+ *
+ * For detailed documentation please refer to the 'ExpenseScreen'.
+ * The IncomeScreen class follows a similar structure and functionality.
+ */
 public class IncomeScreen implements DataRefresh{
     private VBox view;
     private PFMApp app;
@@ -30,16 +36,23 @@ public class IncomeScreen implements DataRefresh{
 
     private BarChart<String, Number> incomeChart;
 
+    /**
+     * Constructs an IncomeScreen with necessary dependencies and initializes the UI components.
+     *
+     * @param app Reference to the main application object.
+     * @param incomeDAO Data access object for income records.
+     * @param userId ID of the currently logged-in user.
+     */
+
     public IncomeScreen(PFMApp app, IncomeDAO incomeDAO, int userId) {
         this.app = app;
-        app.registerListener(this);
+        app.registerListener(this); // Registering this screen to listen for data changes
         this.incomeDAO = incomeDAO;
         this.userId = userId;
         createView();
         setupIncomeChart();
 
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/income.css").toExternalForm());
-
     }
 
     private void createView() {
@@ -231,7 +244,11 @@ public class IncomeScreen implements DataRefresh{
         updateIncomeChart();
     }
 
-
+    /**
+     * Returns the main view component of the IncomeScreen.
+     *
+     * @return VBox containing all UI elements of the IncomeScreen.
+     */
     public VBox getView() {
         return view;
     }

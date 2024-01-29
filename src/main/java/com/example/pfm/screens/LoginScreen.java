@@ -13,23 +13,33 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 
+/**
+ * The LoginScreen class provides the UI for user login, including fields for username and password,
+ * and buttons for login and registration navigation.
+ */
 public class LoginScreen {
-
     private UserService userService;
     private PFMApp app;
     private static GridPane view;
-
     private static HBox hBox;
 
+    /**
+     * Constructs a LoginScreen with references to the main application and user service.
+     *
+     * @param app The main application instance for navigation.
+     * @param userService The service for user authentication and management.
+     */
     public LoginScreen(PFMApp app, UserService userService) {
         this.app = app;
         this.userService = userService;
         createView();
 
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/login.css").toExternalForm());
-
     }
 
+    /**
+     * Initializes the UI components for the login screen including input fields, buttons, and layout setup.
+     */
     private void createView() {
         hBox = new HBox(20);
         view = new GridPane();
@@ -67,14 +77,27 @@ public class LoginScreen {
         hBox.getChildren().addAll(view, pfmLogoView);
     }
 
+    /**
+     * Handles the login action when the login button is clicked. Authenticates the user and navigates to the main screen
+     * or shows an error dialog if authentication fails.
+     *
+     * @param username The entered username.
+     * @param password The entered password.
+     */
     private void handleLogin(String username, String password) {
         String result = userService.authenticateUser(username, password);
         if (result == null) {
-           app.showMainScreen();
+           app.showMainScreen(); // Navigation to main screen on successful login
         } else {
-            showErrorDialog(result);
+            showErrorDialog(result); // Display error dialog on failed login
         }
     }
+
+    /**
+     * Displays an error dialog with a specified message.
+     *
+     * @param message The error message to display.
+     */
 
     private void showErrorDialog(String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -87,6 +110,12 @@ public class LoginScreen {
         alert.showAndWait();
     }
 
+
+    /**
+     * Returns the view component of the login screen.
+     *
+     * @return The Parent view component containing the login form and logo.
+     */
     public static Parent getView() {
         return hBox;
     }

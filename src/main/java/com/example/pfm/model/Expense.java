@@ -1,18 +1,33 @@
 package com.example.pfm.model;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+
+/**
+ * Represents an expense record in the PFM application.
+ * Each expense is associated with a user and categorized.
+ */
 
 public class Expense {
-    private int id;
-    private int userId;
-    private double amount;
-    private String category;
-    private LocalDate date;
+    private int id; // Unique identifier for the expense.
+    private int userId;  // Identifier of the user to whom the expense belongs.
+    private double amount; // The value of the expense.
+    private String category; // The category this expense is allocated to.
+    private LocalDate date; // The date of the expense.
 
-    //Constructors
+    /**
+     * Default constructor for creating an Expense instance without setting properties initially.
+     */
     public Expense(){
     }
+
+    /**
+     * Constructs an Expense with specified details.
+     *
+     * @param userId The identifier of the user this expense is associated with.
+     * @param amount The value of the expense.
+     * @param category The category this expense is allocated to.
+     * @param date The date of the expense.
+     */
 
     public Expense(int userId, double amount, String category, LocalDate date){
         this.userId = userId;
@@ -21,7 +36,7 @@ public class Expense {
         this.date = date;
     }
 
-    //Getters and setters
+    //Getters and setters..
     public int getId() {
         return id;
     }

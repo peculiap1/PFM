@@ -9,8 +9,11 @@ import javafx.scene.layout.GridPane;
 
 import java.time.LocalDate;
 
+/**
+ * The IncomeEntryScreen class provides a user interface for entering new income records.
+ * It includes form fields for income amount, source, and date, along with save and back buttons.
+ */
 public class IncomeEntryScreen {
-
     private GridPane view;
     private PFMApp app;
     private int userId;
@@ -18,14 +21,23 @@ public class IncomeEntryScreen {
     private ComboBox<String> sourceDropdown;
     private DatePicker datePicker;
 
+    /**
+     * Constructs an IncomeEntryScreen with necessary dependencies and initializes the UI components.
+     *
+     * @param app Reference to the main application object.
+     * @param userId ID of the currently logged-in user.
+     */
+
     public IncomeEntryScreen(PFMApp app, int userId) {
         this.app = app;
         this.userId = userId;
         createView();
-
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/income-entry.css").toExternalForm());
     }
 
+    /**
+     * Initializes the view components, including form fields for income details and action buttons.
+     */
     private void createView() {
         view = new GridPane();
         view.setPadding(new Insets(10, 10, 10, 10));
@@ -90,10 +102,21 @@ public class IncomeEntryScreen {
         view.getChildren().addAll(amountLabel, amountField, sourceLabel, sourceDropdown, dateLabel, datePicker, saveButton, backButton);
     }
 
-    private void clearForm() {
-        amountField.clear();
-        sourceDropdown.getSelectionModel().clearSelection();
-        datePicker.setValue(null);
+    /**
+     * Validates the input data from the form fields before submitting the income.
+     *
+     * @param amountText The amount of income entered as text.
+     * @param source The selected source of income.
+     * @param date The selected date of income.
+     * @return true if the input data is valid. false if not.
+     */
+    private boolean validateIncomeData(String amountText, String source, LocalDate date) {
+        try {
+            double amount = Double.parseDouble(amountText);
+            return amount > 0 && source != null && date != null;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     private void showAlert(Alert.AlertType alertType, String title, String message, boolean navigateBack) {
@@ -112,15 +135,20 @@ public class IncomeEntryScreen {
         alert.show();
     }
 
-    private boolean validateIncomeData(String amountText, String source, LocalDate date) {
-        try {
-            double amount = Double.parseDouble(amountText);
-            return amount > 0 && source != null && date != null;
-        } catch (NumberFormatException e) {
-            return false;
-        }
+    /**
+     * Clears all form fields after successfully saving an income record or when initiating a new entry.
+     */
+    private void clearForm() {
+        amountField.clear();
+        sourceDropdown.getSelectionModel().clearSelection();
+        datePicker.setValue(null);
     }
 
+    /**
+     * Returns the main view component of the IncomeEntryScreen.
+     *
+     * @return GridPane containing all UI elements of the IncomeEntryScreen.
+     */
     public GridPane getView() {
         return view;
     }

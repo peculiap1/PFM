@@ -10,49 +10,74 @@ import com.example.pfm.model.User;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
+import org.mindrot.jbcrypt.BCrypt;
 
+/**
+ * Service class for user-related operations, including registration, authentication,
+ * and managing user sessions.
+ */
 public class UserService {
     private UserDAO userDAO;
     private IncomeDAO incomeDAO;
-
     private ExpenseDAO expenseDAO;
     private User loggedInUser;
-    private static final int MAX_ATTEMPTS = 3;
-    private static final int LOCKOUT_DURATION_MINUTES = 1;
 
+    // Maximum login attempts before locking the account temporarily.
+    private static final int MAX_ATTEMPTS = 3;
+    // Duration in minutes for which the account is locked after exceeding max login attempts.
+    private static final int LOCKOUT_DURATION_MINUTES = 5;
+    // Tracks the number of failed login attempts for usernames.
     private Map<String, Integer> loginAttempts = new HashMap<>();
+    // Tracks lockout expiry time for usernames.
     private Map<String, LocalDateTime> lockoutExpiry = new HashMap<>();
 
+    /**
+     * Constructor initializing DAOs for user, income, and expense entities.
+     */
     public UserService() {
         userDAO = new UserDAO();
         incomeDAO = new IncomeDAO();
         expenseDAO = new ExpenseDAO();
     }
 
+    /**
+     * Registers a new user with the provided username and password.
+     * The password is hashed before storage for (extra) security purposes.
+     *
+     * @param username The desired username for the new account.
+     * @param password The desired password for the new account.
+     * @return A message indicating the outcome of the registration attempt.
+     */
     public String registerUser(String username, String password) {
-
-        // Checks if the username and/or password are empty
         if (username.trim().isEmpty() || password.trim().isEmpty()) {
             return "Username and password cannot be empty.";
         }
 
-        // Checks if the username already exists
         if (userDAO.getUserByUsername(username) != null) {
             return "Username already exists.";
         }
 
-        // Checks for minimum password length (for extra security)
         if (password.length() < 8) {
             return "Password must be at least 8 characters long.";
         }
 
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
 
-        boolean success = userDAO.insertUser(new User(username, password));
+        boolean success = userDAO.insertUser(new User(username, hashedPassword));
         if (!success) {
             return "Registration failed. Please try again.";
         }
         return null;
     }
+
+    /**
+     * Attempts to authenticate a user with the provided username and password.
+     * Accounts are temporarily locked after a specified number of failed attempts.
+     *
+     * @param username The username of the account attempting to log in.
+     * @param password The password of the account attempting to log in.
+     * @return A message indicating the outcome of the login attempt.
+     */
 
     public String authenticateUser(String username, String password) {
         if (username.trim().isEmpty() || password.trim().isEmpty()) {
@@ -62,17 +87,19 @@ public class UserService {
             return "Account is temporarily locked due to multiple failed login attempts. Please try again later.";
         }
         User user = userDAO.getUserByUsername(username);
-        if (user == null) {
-            return "Incorrect username and/or password.";
-        }
-        if (!user.getPassword().equals(password)){
+        if (user == null || !BCrypt.checkpw(password, user.getPassword())) {
             incrementLoginAttempts(username);
             return "Incorrect username and/or password.";
         }
+
+        resetLoginAttempts(username);
+
         loggedInUser = user;
         return null;
     }
 
+
+    // Helper methods
     private void incrementLoginAttempts(String username) {
         int attempts = loginAttempts.getOrDefault(username, 0);
         attempts++;
@@ -116,6 +143,10 @@ public class UserService {
     public String getCurrentUsername() {
         return loggedInUser != null ? loggedInUser.getUsername() : null;
     }
+
+    /**
+     * Method for logging out a user.
+     */
     public void logoutUser() {
         loggedInUser = null;
         loginAttempts.clear();

@@ -10,6 +10,11 @@ import org.w3c.dom.Text;
 
 import java.time.LocalDate;
 
+/**
+ * The ExpenseEntryScreen class provides a user interface for entering and saving new expenses. It allows users
+ * to specify the amount, category, and date of the expense. The screen includes form validation and feedback mechanisms
+ * to guide the user through the expense entry process.
+ */
 public class ExpenseEntryScreen {
     private GridPane view;
     private PFMApp app;
@@ -18,15 +23,25 @@ public class ExpenseEntryScreen {
     private ComboBox<String> categoryDropdown;
     private DatePicker datePicker;
 
+    /**
+     * Constructs an ExpenseEntryScreen with a reference to the main application and the current user's ID.
+     * Initializes the UI components and stylesheets.
+     *
+     * @param app Reference to the main application object.
+     * @param userId The ID of the currently logged-in user.
+     */
+
     public ExpenseEntryScreen(PFMApp app, int userId) {
         this.app = app;
         this.userId = userId;
+
         createView();
-
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/expense-entry.css").toExternalForm());
-
     }
 
+    /**
+     * Initializes the UI components of the expense entry screen and sets up layout constraints.
+     */
     private void createView() {
         view = new GridPane();
         view.setPadding(new Insets(10, 10, 10, 10));
@@ -90,12 +105,23 @@ public class ExpenseEntryScreen {
         view.getChildren().addAll(amountLabel, amountField, categoryLabel, categoryDropdown, datePicker, saveButton, backButton);
     }
 
+    /**
+     * Clears all input fields in the form to their default states.
+     */
     private void clearForm() {
         amountField.clear();
         categoryDropdown.getSelectionModel().clearSelection();
         datePicker.setValue(null);
     }
 
+    /**
+     * Displays an alert dialog with a specified type, title, and message. Optionally navigates back to the main screen upon closure.
+     *
+     * @param alertType The type of the alert dialog.
+     * @param title The title of the alert dialog.
+     * @param message The message to display in the alert dialog.
+     * @param navigateBack If true, navigates back to the main screen when the alert is closed.
+     */
     private void showAlert(Alert.AlertType alertType, String title, String message, boolean navigateBack) {
         Alert alert = new Alert(alertType);
         alert.setTitle(title);
@@ -112,6 +138,16 @@ public class ExpenseEntryScreen {
         alert.show();
     }
 
+    /**
+     * Validates the user input for a new expense entry. Ensures that the amount is a positive number, the category is selected,
+     * and the date is not null.
+     *
+     * @param amountText The entered amount as text.
+     * @param category The selected expense category.
+     * @param date The selected date for the expense.
+     * @return true if the input data is valid, false otherwise.
+     */
+
     private boolean validateExpenseData(String amountText, String category, LocalDate date) {
         try {
             double amount = Double.parseDouble(amountText);
@@ -120,6 +156,12 @@ public class ExpenseEntryScreen {
             return false;
         }
     }
+
+    /**
+     * Returns the main view of this screen.
+     *
+     * @return The GridPane layout containing all UI components of the expense entry screen.
+     */
     public GridPane getView() {
         return view;
     }

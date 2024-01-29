@@ -22,7 +22,10 @@ import java.time.format.TextStyle;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
-
+/**
+ * The ExpenseScreen class provides a user interface for displaying and managing user expenses.
+ * It includes a table for viewing individual expenses and a bar chart for visualizing monthly expenses.
+ */
 public class ExpenseScreen implements DataRefresh {
     private VBox view;
     private PFMApp app;
@@ -31,20 +34,31 @@ public class ExpenseScreen implements DataRefresh {
 
     private BarChart<String, Number> expenseChart;
 
+    /**
+     * Constructs an ExpenseScreen with necessary dependencies and initializes the UI components.
+     *
+     * @param app Reference to the main application object.
+     * @param expenseDAO Data access object for expense operations.
+     * @param userId ID of the currently logged-in user.
+     */
+
     public ExpenseScreen(PFMApp app, ExpenseDAO expenseDAO, int userId) {
         this.app = app;
-        app.registerListener(this);
+        app.registerListener(this); // Registering this screen to listen for data changes
         this.expenseDAO = expenseDAO;
         this.userId = userId;
         createView();
         setupExpenseChart();
-
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/Expense.css").toExternalForm());
-
     }
 
+    /**
+     * Initializes the view components, including the expense table and action buttons.
+     */
     private void createView() {
         view = new VBox();
+
+        //Table view that displays the expense amount, category, date and actions.
         TableView<Expense> ExpenseTableView = new TableView<>();
         TableColumn<Expense, Double> amountColumn = new TableColumn<>("Amount");
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
@@ -60,9 +74,10 @@ public class ExpenseScreen implements DataRefresh {
         List<Expense> Expenses = expenseDAO.getAllExpensesByUserId(userId);
         ExpenseTableView.setItems(FXCollections.observableArrayList(Expenses));
 
-
+        // Action column which allows the user to edit or delete each expense in the tableview.
         TableColumn<Expense, Void> actionsColumn = new TableColumn<>("Actions");
         actionsColumn.setCellFactory(col -> new TableCell<Expense, Void>() {
+            //Creation of the edit and delete buttons for each expense in the tableview.
             private final Button editButton = new Button("Edit");
             private final Button deleteButton = new Button("Delete");
 
@@ -77,8 +92,9 @@ public class ExpenseScreen implements DataRefresh {
                     deleteExpense(selectedExpense);
                 });
             }
-
+            // Opens a dialog that allow the user to edit an expense.
             private void openExpenseEditForm(Expense selectedExpense) {
+                // Dialog setup
                 Dialog<Expense> dialog = new Dialog<>();
                 dialog.setTitle("Edit Expense");
                 dialog.setHeight(275);
@@ -87,6 +103,7 @@ public class ExpenseScreen implements DataRefresh {
                 ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
                 dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
 
+                //Form creation
                 TextField amountField = new TextField(String.valueOf(selectedExpense.getAmount()));
                 ComboBox<String> categoryField = new ComboBox<>();
                 categoryField.getItems().addAll(CategoryConfig.CATEGORIES);
@@ -105,6 +122,7 @@ public class ExpenseScreen implements DataRefresh {
 
                 dialog.getDialogPane().setContent(grid);
 
+                //validates the user's input.
                 dialog.setResultConverter(dialogButton -> {
                     if (dialogButton == saveButtonType) {
                         try {
@@ -147,7 +165,7 @@ public class ExpenseScreen implements DataRefresh {
 
                 alert.showAndWait();
             }
-
+            // Opens alert that allows the user to delete an expense.
             private void deleteExpense(Expense selectedExpense) {
                 Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this expense?");
                 confirmationAlert.setTitle("Confirm Delete");
@@ -186,7 +204,9 @@ public class ExpenseScreen implements DataRefresh {
         view.getChildren().add(ExpenseTableView);
     }
 
-    //Monthly Expenses total chart
+    /**
+     * Sets up the bar chart for displaying monthly expenses.
+     */
     private void setupExpenseChart() {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -208,6 +228,10 @@ public class ExpenseScreen implements DataRefresh {
         view.getChildren().add(expenseChart);
     }
 
+    /**
+     * Updates the expense chart with current data. This method is called whenever there is a change
+     * in the expense data.
+     */
     private void updateExpenseChart() {
         XYChart.Series<String, Number> series = new XYChart.Series<>();
         series.setName("Monthly Expense");
@@ -222,11 +246,17 @@ public class ExpenseScreen implements DataRefresh {
         expenseChart.getData().add(series);
     }
 
+
     @Override
     public void refreshData() {
         updateExpenseChart();
     }
 
+    /**
+     * Returns the main view component of the ExpenseScreen.
+     *
+     * @return VBox containing all UI elements of the ExpenseScreen.
+     */
     public VBox getView() {
         return view;
     }

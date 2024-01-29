@@ -1,17 +1,32 @@
 package com.example.pfm.model;
 
+/**
+ * Represents a user of the PFM application.
+ * This class encapsulates user-specific details such as username and password, user ID and authentication.
+ */
 public class User {
-    private int id;
-    private String username;
-    private String password;
+    private int id; // Unique identifier for the user.
+    private String username; // The user's chosen username for login.
+    private String password; // The user's password for authentication.
 
+    /**
+     * Constructs a new User with specified username and password.
+     *
+     * @param username The username chosen by the user, used for login.
+     * @param password The user's password, used for authentication.
+     */
     public User(String username, String password) {
         this.username = username;
         this.password = password;
     }
 
+    /**
+     * Default constructor for creating a User instance without initial property values.
+     */
     public User() {
     }
+
+    // getters and setters..
 
     public int getId() {
         return id;
@@ -35,13 +50,5 @@ public class User {
 
     public void setPassword(String password) {
         this.password = password;
-    }
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", username='" + username + '\'' +
-                ", password='" + password + '\'' +
-                '}';
     }
 }

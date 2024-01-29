@@ -2,18 +2,32 @@ package com.example.pfm.model;
 
 import java.time.LocalDate;
 
+/**
+ * Represents an income record for the PFM application.
+ * This class captures the details of income sources for users.
+ */
+
 public class Income {
-    private int id;
-    private int userId;
-    private double amount;
-    private String source;
-    private LocalDate date;
+    private int id; // Unique identifier for the income record.
+    private int userId; // Identifier of the user to whom the income belongs.
+    private double amount; // The value of the income.
+    private String source; // Description of the income source.
+    private LocalDate date; // The date on which the income was received.
 
-    //Constructors
+    /**
+     * Default constructor for creating an Income instance without initial property values.
+     */
     public Income() {
-
     }
 
+    /**
+     * Constructs an Income with specified details.
+     *
+     * @param userId The identifier of the user this income is associated with.
+     * @param amount The value of the income.
+     * @param source The description of the income source.
+     * @param date The date on which the income was received.
+     */
     public Income(int userId, double amount, String source, LocalDate date) {
         this.userId = userId;
         this.amount = amount;
@@ -21,7 +35,7 @@ public class Income {
         this.date = date;
     }
 
-    //Getters and setters
+    //Getters and setters..
     public int getId() {
         return id;
     }

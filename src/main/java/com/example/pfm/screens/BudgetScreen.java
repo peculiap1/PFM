@@ -20,22 +20,25 @@ import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import org.xml.sax.helpers.XMLReaderAdapter;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Represents the budget screen in the Personal Finance Management (PFM) application.
+ * This screen allows the user to add budgets for all their expense categories.
+ * It then displays their set limit, and how much of the budget has been spent.
+ * It also displays if they went over their set budget.
+ */
 public class BudgetScreen implements DataRefresh {
     private PFMApp app;
     private BudgetDAO budgetDAO;
-
     private ExpenseDAO expenseDAO;
     private VBox view;
     private TableView<Budget> budgetTableView;
     private StackedBarChart<String, Number> budgetBarChart;
-
     private int userId;
 
     @Override
@@ -44,21 +47,37 @@ public class BudgetScreen implements DataRefresh {
         refreshBudgetBarChart();
     }
 
+    /**
+     * Constructs the BudgetScreen which displays the user's budget information, including a bar chart of budgeted vs. spent amounts for various categories.
+     * This screen allows the user to visualize their budget allocations and spending, add new budgets, edit existing ones, and delete budgets as needed.
+     *
+     * @param app The main application instance, providing access to shared resources and functionality.
+     * @param budgetDAO The data access object for budget-related operations, allowing interaction with the database for budget data.
+     * @param expenseDAO The data access object for expense-related operations, used to calculate the total spent amount in each budget category.
+     * @param userId The unique identifier of the currently logged-in user, used to fetch and manage budgets specific to the user.
+     */
     public BudgetScreen(PFMApp app, BudgetDAO budgetDAO, ExpenseDAO expenseDAO, int userId) {
         this.app = app;
-        app.registerListener(this);
+        app.registerListener(this); // Registering this screen to listen for data changes
         this.budgetDAO = budgetDAO;
         this.expenseDAO = expenseDAO;
         this.userId = userId;
+
+        // Initializes and sets up the bar chart to display budgeted vs. spent amounts.
         createBudgetBarChart();
+        // Sets up the overall layout and UI components of the Budget screen.
         createview();
+        // Adds the budget bar chart to the screen's layout.
         addBudgetBarChart();
+        // Fetches the latest budget and expense data from the database and refreshes the bar chart.
         refreshBudgetBarChart();
 
-
+        // Applies the CSS stylesheet to the screen for consistent styling.
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/budget.css").toExternalForm());
     }
-
+    /**
+     * Sets up the overall layout for the budget screen, arranging UI components.
+     */
     private void createview() {
         view = new VBox();
         budgetTableView = new TableView<>();
@@ -71,7 +90,9 @@ public class BudgetScreen implements DataRefresh {
 
         view.getChildren().addAll(budgetTableView, addButton, customLegend);
     }
-
+    /**
+     * Initializes and sets up the budget table to display all the user's budgets.
+     */
     private void createBudgetTable() {
         TableColumn<Budget, String> categoryColumn = new TableColumn<>("Category");
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
@@ -117,6 +138,10 @@ public class BudgetScreen implements DataRefresh {
         refreshBudgetBarChart();
     }
 
+    /**
+     * Returns an over budget column.
+     * This column displays how much the user went over their set budget.
+     */
     private static TableColumn<Budget, Number> getBudgetNumberTableColumn() {
         TableColumn<Budget, Number> overBudgetColumn = new TableColumn<>("Over Budget");
         overBudgetColumn.setCellValueFactory(cellData -> {
@@ -147,6 +172,9 @@ public class BudgetScreen implements DataRefresh {
         return overBudgetColumn;
     }
 
+    /**
+     * Sets up the bar chart to display budgeted vs. spent amounts.
+     */
     private void createBudgetBarChart() {
         CategoryAxis xAxis = new CategoryAxis();
         NumberAxis yAxis = new NumberAxis();
@@ -169,17 +197,25 @@ public class BudgetScreen implements DataRefresh {
         budgetBarChart.getData().addAll(spentSeries, remainingSeries);
     }
 
+    /**
+     * Fetches the latest budget and expense data from the database and refreshes the bar chart.
+     */
     private void refreshBudgetTable() {
         List<Budget> budgets = budgetDAO.getAllBudgetsByUserId(userId);
         budgetTableView.setItems(FXCollections.observableArrayList(budgets));
         refreshBudgetData();
     }
 
+    /**
+     * Sets up the dialog that displays the form to add a new budget to the user.
+     */
     private void showAddEditBudgetForm(Budget budget) {
+        //Dialog setup
         Dialog<Budget> dialog = new Dialog<>();
         dialog.setTitle((budget == null) ? "Add New Budget" : "Edit Budget");
         dialog.getDialogPane().setMinHeight(Region.USE_PREF_SIZE);
         dialog.getDialogPane().setPrefHeight(225);
+
         dialog.getDialogPane().getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/budget.css").toExternalForm());
 
         ButtonType saveButtonType = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
@@ -260,6 +296,10 @@ public class BudgetScreen implements DataRefresh {
         alert.showAndWait();
     }
 
+    /**
+     * Displays budget deletion confirmation.
+     * Deletes user budget on confirmation.
+     */
     private void deleteBudget(Budget budget) {
         Alert confirmationAlert = new Alert(Alert.AlertType.CONFIRMATION, "Are you sure you want to delete this budget?");
         confirmationAlert.setTitle("Confirm Delete");
@@ -281,6 +321,8 @@ public class BudgetScreen implements DataRefresh {
         refreshBudgetBarChart();
     }
 
+
+    //Refresh methods..
     private void refreshBudgetData() {
         Map<String, Double> spentTotals = expenseDAO.getTotalSpentPerCategory(userId);
 
@@ -327,7 +369,9 @@ public class BudgetScreen implements DataRefresh {
         budgetBarChart.setAnimated(false); //this is set to false because the animation misaligned the xAis labels
     }
 
-    //Method to set the upperbound of the Y-axis to the highest budget limit
+    /**
+     * Sets the upperbound of the Y-axis to the highest budget limit
+     */
     private double getMaxBudgetLimit() {
         double maxLimit = 0;
         for (Budget budget : budgetDAO.getAllBudgetsByUserId(userId)) {
@@ -365,6 +409,8 @@ public class BudgetScreen implements DataRefresh {
         return legendItem;
     }
 
+    // Styling for the Bar Chart
+
     private void applyBarChartStyles(XYChart.Series<String, Number> spentSeries, XYChart.Series<String, Number> limitSeries) {
         for (XYChart.Data<String, Number> data : spentSeries.getData()) {
             Node node = data.getNode();
@@ -401,7 +447,10 @@ public class BudgetScreen implements DataRefresh {
         });
     }
 
-
+    /**
+     * Returns the view for the budget screen.
+     * @return A VBox containing the screen's layout and components.
+     */
     public VBox getView() {
         return view;
     }

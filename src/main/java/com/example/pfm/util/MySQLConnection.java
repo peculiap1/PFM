@@ -4,6 +4,9 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * Utility class for creating connections to the MySQL database.
+ */
 public class MySQLConnection {
     private static final String DATABASE_URL = "jdbc:mysql://localhost:3306/pfm";
     private static final String DATABASE_USER = "root";

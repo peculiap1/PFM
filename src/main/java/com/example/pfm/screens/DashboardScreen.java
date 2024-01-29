@@ -4,9 +4,6 @@ import com.example.pfm.PFMApp;
 import com.example.pfm.dao.BudgetDAO;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.dao.IncomeDAO;
-import com.example.pfm.model.Budget;
-import com.example.pfm.model.User;
-import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -15,29 +12,50 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 
+/**
+ * Represents the dashboard screen in the Personal Finance Management (PFM) application.
+ * This is the first screen the user sees after logging in.
+ * It shows a high-level summary of the user's incomes and expenses.
+ */
+
 public class DashboardScreen implements DataRefresh{
     private VBox view;
     private PFMApp app;
     private Label welcomeLabel;
-
     private StackedBarChart<Number, String> financeChart;
     private IncomeDAO incomeDAO;
     private ExpenseDAO expenseDAO;
     private BudgetDAO budgetDAO;
     private int userId;
 
+
+    /**
+     * Constructs the BudgetScreen which displays the user's budget information, including a bar chart of budgeted vs. spent amounts for various categories.
+     * This screen allows the user to visualize their budget allocations and spending, add new budgets, edit existing ones, and delete budgets as needed.
+     *
+     * @param app The main application instance, providing access to shared resources and functionality.
+     * @param incomeDAO The data access object for income-related operations, used to track and calculate the user's total income for the month.
+     * @param expenseDAO The data access object for expense-related operations, used to calculate the total spent amount in each budget category.
+     * @param budgetDAO The data access object for budget-related operations, allowing interaction with the database for budget data.
+     * @param userId The unique identifier of the currently logged-in user, used to fetch and manage budgets specific to the user.
+     */
     public DashboardScreen(PFMApp app, IncomeDAO incomeDAO, ExpenseDAO expenseDAO, BudgetDAO budgetDAO, int userId) {
         this.app = app;
-        app.registerListener(this);
+        app.registerListener(this); // Registering this screen to listen for data changes
         this.incomeDAO = incomeDAO;
         this.expenseDAO = expenseDAO;
         this.budgetDAO = budgetDAO;
         this.userId = userId;
-        createView();
-        createFinanceChart();
-        addBudgetPieChartToDashBoard();
-        updateTotals();
 
+        // Sets up the overall layout and UI components of the Budget screen.
+        createView();
+        // Sets up the finance chart that shows the total income and expenses of the current month.
+        createFinanceChart();
+        // Displays a pie chart that displays the expense totals for the categories of set budgets.
+        addBudgetPieChartToDashBoard();
+        // Updates/Refreshes the totals of the finance chart.
+        updateTotals();
+        // Applies the CSS stylesheet to the screen for consistent styling.
         view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/dashboard.css").toExternalForm());
 
     }
@@ -73,10 +91,15 @@ public class DashboardScreen implements DataRefresh{
         VBox.setMargin(addExpenseButton, new Insets(10));
         addExpenseButton.setOnAction(e -> app.showExpenseEntryScreen());
 
-        /** other UI components **/
 
         view.getChildren().addAll(welcomeLabel, addIncomeButton, addExpenseButton);
     }
+
+    /**
+     * Creates the financial summary chart for the current month, displaying income, expenses, and net profit/loss.
+     * The chart is set up with a NumberAxis (x-axis) for the amounts and a CategoryAxis (y-axis) for the categories.
+     * Grid lines are disabled for a cleaner look, and the chart is added to the main view layout.
+     */
 
     private void createFinanceChart() {
         NumberAxis xAxis = new NumberAxis();
@@ -103,10 +126,17 @@ public class DashboardScreen implements DataRefresh{
         view.getChildren().add(financeChart);
     }
 
-    // Pie chart (budgets)
+    /**
+     * Creates and configures a PieChart to display the breakdown of expenses by category.
+     * Each slice represents a category's total spent amount, styled with specific CSS classes based on the category.
+     * The pie chart is configured without a legend and with a fixed title.
+     *
+     * @return The configured PieChart instance with data slices for each budget category.
+     */
     private PieChart createBudgetPieChart() {
        PieChart pieChart = new PieChart();
 
+        // Populates the pie chart with slices representing each budget category and its total spent amount.
         budgetDAO.getAllBudgetsByUserId(userId).forEach(budget -> {
             PieChart.Data slice = new PieChart.Data(
                     budget.getCategory() + ": €" + budget.getSpentAmount(),
@@ -115,6 +145,7 @@ public class DashboardScreen implements DataRefresh{
             pieChart.getData().add(slice);
         });
 
+        // Applies CSS styling to each slice based on its category after the chart is rendered.
         Platform.runLater(() -> {
             for (PieChart.Data data : pieChart.getData()) {
                 Node sliceNode = data.getNode();
@@ -131,6 +162,7 @@ public class DashboardScreen implements DataRefresh{
 
         return pieChart;
     }
+
 
     private String getCategoryStyleClass(String category) {
         switch (category) {
@@ -231,7 +263,10 @@ public class DashboardScreen implements DataRefresh{
         }
     }
 
-
+    /**
+     * Returns the view for the dashboard screen.
+     * @return A VBox containing the screen's layout and components.
+     */
     public VBox getView() {
         return view;
     }
