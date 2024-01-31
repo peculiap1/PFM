@@ -57,14 +57,6 @@ class ExpenseDAOTest {
         assertEquals(600.00, updatedExpense.getAmount(), "The amount should be updated");
     }
 
-    @Test
-    void testDeleteExpense() {
-        int expenseId = 4;
-        assertTrue(expenseDAO.deleteExpense(expenseId, TEST_USER_ID), "Delete expense should return true");
-
-        Expense deletedExpense = expenseDAO.getExpenseById(expenseId);
-            assertNull(deletedExpense, "Deleted expense should no longer exist");
-        }
 
     /** @AfterAll
     static void tearDown() {

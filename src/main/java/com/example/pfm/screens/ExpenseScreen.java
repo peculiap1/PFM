@@ -49,7 +49,7 @@ public class ExpenseScreen implements DataRefresh {
         this.userId = userId;
         createView();
         setupExpenseChart();
-        view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/Expense.css").toExternalForm());
+        view.getStylesheets().add(getClass().getResource("/com/example/pfm/stylesheets/expense.css").toExternalForm());
     }
 
     /**
