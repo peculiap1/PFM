@@ -3,7 +3,6 @@ package com.example.pfm;
 import com.example.pfm.dao.BudgetDAO;
 import com.example.pfm.dao.ExpenseDAO;
 import com.example.pfm.dao.IncomeDAO;
-import com.example.pfm.model.User;
 import com.example.pfm.screens.*;
 import com.example.pfm.service.UserService;
 import javafx.application.Application;

@@ -35,9 +35,15 @@ public class UserService {
      * Constructor initializing DAOs for user, income, and expense entities.
      */
     public UserService() {
-        userDAO = new UserDAO();
+        this.userDAO = new UserDAO();
         incomeDAO = new IncomeDAO();
         expenseDAO = new ExpenseDAO();
+    }
+
+    public UserService(UserDAO userDAO, IncomeDAO incomeDAO, ExpenseDAO expenseDAO) {
+        this.userDAO = userDAO;
+        this.incomeDAO = incomeDAO;
+        this.expenseDAO = expenseDAO;
     }
 
     /**
