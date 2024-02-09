@@ -140,10 +140,13 @@ Once PFM is running, you'll be greeted with the login screen. Here's how to get 
 
 1. Register a new account using the "Register" button.
 2. Log in with your new credentials.
-3. Navigate to the "Income" tab to add your income details.
-4. Use the "Expenses" tab to keep track of your spending.
-5. Set budgets for different categories to manage your finances better.
-6. View financial reports to understand your spending habits.
+3. On the dashboard you can add an income or expense. 
+4. Use the "Income" tab to keep track of your incomes. 
+5. Use the "Expenses" tab to keep track of your spending.
+6. Set budgets for different categories to manage your finances better.
+7. View financial reports to understand your spending habits.
+8. Use the print function to print out your financial reports.
+9. When you're done, click on the user icon on the top right to log out. 
 
 
 
